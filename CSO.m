@@ -20,16 +20,15 @@ addpath(genpath(pwd));
 global initial_flag
 
 %d: dimensionality
-d = 100;
+d = 1000;
 %maxfe: maximal number of fitness evaluations
-%maxfe = d*5000;
-maxfe = 1000;
+maxfe = d*5000;
+%maxfe = 1000;
 %runnum: the number of trial runs
-runnum = 10;
+runnum = 30;
 funnum = 7;
 results = zeros(7,runnum);
 generation = {};
-
 
 for funcid = 1 : funnum
     n = d;
