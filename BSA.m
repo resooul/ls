@@ -1,3 +1,4 @@
+rand('seed', 123456);
 
 javaclasspath('CEC08 Func\FractalFunctions.jar');
 addpath(genpath(pwd));
@@ -10,10 +11,11 @@ d = 1000;
 maxfe = d*5000;
 %runnum: the number of trial runs
 runnum = 30;
-
+funnum = 7;
 results = zeros(7,runnum);
- 
-for funcid = 1 : 7
+generation = {};
+
+for funcid = 1 : funnum
     n = d;
     initial_flag = 0;
     
@@ -74,12 +76,13 @@ for run = 1 : runnum
     XRRmin = repmat(lu(1, :), m, 1);
     XRRmax = repmat(lu(2, :), m, 1);
     %rand('seed', sum(100 * clock));
-    rand('seed', 123456);
+
     pop = XRRmin + (XRRmax - XRRmin) .* rand(m, d);
     historical_pop=XRRmin + (XRRmax - XRRmin) .* rand(m, d);
     fitness = benchmark_func(pop, funcid);
     v = zeros(m,d);
     bestever = 1e200;
+    bestByIter = [];
     DIM_RATE = 1;
     
     FES = m;
@@ -109,19 +112,17 @@ for run = 1 : runnum
         % fitness evaluation
         fitness = benchmark_func(offsprings, funcid);
         bestever = min(bestever, min(fitness));
-        FES = FES + ceil(m/2);
-        fprintf('Best fitness: %e FES %d\n', bestever,FES); 
-
-        gen = gen + 1;
+        FES = FES + ceil(m);
+       %fprintf('Best fitness: %e FES %d\n', bestever,FES); 
+       gen = gen + 1;
+       bestByIter = [bestByIter; bestever];
     end;
-    
-    results(funcid, runnum) = bestever;
+    generation{run,funcid} = bestByIter;
+    results(funcid, run) = bestever;
+    fprintf('Best fitness: %e \n', bestever); 
     fprintf('Run No.%d Done!\n', run); 
-    dispopulation(['CPU time: ',num2str(toc)]);
+    disp(['CPU time: ',num2str(toc)]);
+    save resultsBSA.mat results generation
 end;
- save resultsBSA.mat results
+ %save resultsBSA.mat results
 end;
-
-
-    
-
